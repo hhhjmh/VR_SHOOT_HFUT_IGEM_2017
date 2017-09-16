@@ -21,9 +21,10 @@ public class PlayUI : MonoBehaviour
     private Text tblood;
     private float timer;
     public static float Times = 0.0f;
-
+    public GameObject dz;
     private void Awake()
     {
+        dz.SetActive(false);
         Times = 0.0f;
         timer = 0.0f;
         round = GameObject.Find("round");
@@ -55,6 +56,7 @@ public class PlayUI : MonoBehaviour
         bloodmax = maincell.maxblood;
         if(Controller.gamebegin==true)
         {
+            dz.SetActive(true);
             blood.transform.FindChild("Image").GetComponent<Image>().color = new Color(1, 0, 0);
             times.gameObject.SetActive(true);
             blood.gameObject.SetActive(true);

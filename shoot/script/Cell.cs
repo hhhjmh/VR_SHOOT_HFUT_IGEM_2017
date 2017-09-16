@@ -31,6 +31,8 @@ public class Cell : MonoBehaviour
     public BulletData ndata = new BulletData(0.2f, new Vector3(0.05f, 0.05f, 0.05f), new Color(1f, 1f, 1f), bullet.normal, 2f, 20f, 10f);
     public BulletData sdata = new BulletData(0.5f, new Vector3(0.05f, 0.05f, 0.05f), new Color(0.0f, 0.0f, 0.0f), bullet.slow, 2f, 40f, 5f);
     public float maxblood = 100f;
+    public float DZSubBlood = 20;
+    public GameObject dztx;
 
     public Transform firepos = null;
     public Transform linefin = null;
@@ -103,6 +105,26 @@ public class Cell : MonoBehaviour
         vect = Vector3.Normalize(linefin.position - firepos.position);
         Vector3 linefinpos = firepos.position + vect * 100;
         line.SetPosition(1, linefinpos);
+    }
+
+    public void makedz(int level)//level包含0
+    {
+        List<GameObject> activelist = new List<GameObject>();
+        GameObject[] temp = GameObject.FindGameObjectsWithTag("enemys");
+        for (int i=0;i< temp.Length;i++)
+        {
+            if (temp[i].GetComponent<enemy>().canshoot == true)
+                activelist.Add(temp[i]);
+        }
+        //特效
+        Instantiate(dztx,this.transform.position,Quaternion.identity);
+        if(activelist.Count>0)
+        {
+            //释放大招
+            foreach(var a in activelist)
+                a.GetComponent<enemy>().subblood((level+1) *DZSubBlood);
+        }
+        activelist.Clear();
     }
 
     public void shoot()

@@ -442,6 +442,7 @@ public class enemy : MonoBehaviour
         {
             blood = 0.0f;
             islife = false;
+            destroy();
         }
     }
 
