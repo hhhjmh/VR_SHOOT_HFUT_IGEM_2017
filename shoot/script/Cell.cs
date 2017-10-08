@@ -33,6 +33,7 @@ public class Cell : MonoBehaviour
     public float maxblood = 100f;
     public float DZSubBlood = 20;
     public GameObject dztx;
+    public GameObject hudun;
 
     public Transform firepos = null;
     public Transform linefin = null;
@@ -64,6 +65,7 @@ public class Cell : MonoBehaviour
 
     void Start()
     {
+        hudun.SetActive(false);
         changecolor = TipUI.transform.FindChild("changecolor").GetComponent<Image>();
         LeftShake = GameObject.Find(@"left_touch_controller_model_skel").GetComponent<ShakeController>();
         RightShake = GameObject.Find(@"right_touch_controller_model_skel").GetComponent<ShakeController>();
@@ -74,6 +76,12 @@ public class Cell : MonoBehaviour
         line.startWidth = LineWidth;
         line.endWidth = LineWidth;
         blood = maxblood;
+    }
+
+    public void dzfull()
+    {
+        if (GlobalData.choice != 0)
+            makedz(4, GlobalData.choice);
     }
 
     private float timeadd = 0.0f;
@@ -107,24 +115,58 @@ public class Cell : MonoBehaviour
         line.SetPosition(1, linefinpos);
     }
 
-    public void makedz(int level)//level包含0
+    public void makedz(int level,int number)//level包含0
     {
-        List<GameObject> activelist = new List<GameObject>();
-        GameObject[] temp = GameObject.FindGameObjectsWithTag("enemys");
-        for (int i=0;i< temp.Length;i++)
+        if (number == 1)//爆照特效
         {
-            if (temp[i].GetComponent<enemy>().canshoot == true)
-                activelist.Add(temp[i]);
+            List<GameObject> activelist = new List<GameObject>();
+            GameObject[] temp = GameObject.FindGameObjectsWithTag("enemys");
+            for (int i = 0; i < temp.Length; i++)
+            {
+                if (temp[i].GetComponent<enemy>().canshoot == true)
+                    activelist.Add(temp[i]);
+            }
+            //特效
+            Instantiate(dztx, this.transform.position, Quaternion.identity);
+            if (activelist.Count > 0)
+            {
+                //释放大招
+                foreach (var a in activelist)
+                    a.GetComponent<enemy>().subblood((level + 1) * DZSubBlood);
+
+            }
+            activelist.Clear();
         }
-        //特效
-        Instantiate(dztx,this.transform.position,Quaternion.identity);
-        if(activelist.Count>0)
+        else if(number==2)//射速加快
         {
-            //释放大招
-            foreach(var a in activelist)
-                a.GetComponent<enemy>().subblood((level+1) *DZSubBlood);
+            StartCoroutine(shootfast(level));
         }
-        activelist.Clear();
+        else if (number == 3)//血量加满
+        {
+            addblood(100000);
+        }
+        else if (number == 4)//无敌状态
+        {
+            StartCoroutine(Invincible(level));
+        }
+    }
+
+    private bool ShootFast = false;
+    private IEnumerator shootfast(int level)
+    {
+        ShootFast = true;
+        yield return new WaitForSeconds(level * 5);
+        ShootFast = false;
+    }
+
+    private bool canInvincible = false;
+    private IEnumerator Invincible(int level)
+    {
+        canInvincible = true;
+        hudun.SetActive(true);
+        yield return new WaitForSeconds(level * 4);
+        canInvincible = false;
+        hudun.SetActive(false);
     }
 
     public void shoot()
@@ -147,7 +189,10 @@ public class Cell : MonoBehaviour
 
             if (defaultbullet == bullet.normal)
             {
-                TimeDV = bul.TimeDV = ndata.TimeDV;
+                if(ShootFast)
+                    TimeDV = bul.TimeDV = 0.05f;
+                else
+                    TimeDV = bul.TimeDV = ndata.TimeDV;
                 bul.size = ndata.size;
                 bul.color = ndata.color;
                 bul.type = ndata.type;
@@ -157,7 +202,10 @@ public class Cell : MonoBehaviour
             }
             else
             {
-                TimeDV = bul.TimeDV = sdata.TimeDV;
+                if (ShootFast)
+                    TimeDV = bul.TimeDV = 0.1f;
+                else
+                    TimeDV = bul.TimeDV = sdata.TimeDV;
                 bul.size = sdata.size;
                 bul.color = sdata.color;
                 bul.type = sdata.type;
@@ -204,7 +252,8 @@ public class Cell : MonoBehaviour
     {
         if (collision.gameObject.tag == "enemy")
         {
-            subblood(collision.gameObject.GetComponent<Bullet>().damage);
+            if (!canInvincible)
+                subblood(collision.gameObject.GetComponent<Bullet>().damage);
             if (this.transform.parent.name == "left_touch_controller_model_skel")
                 LeftShake.Vibrate(VibrationForce.Hard);
             if (this.transform.parent.name == "right_touch_controller_model_skel")

@@ -3,12 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public class GlobalData
+{
+    public static int choice = 0;
+    public static bool cancheck = false;
+    public static Groove startgroove = null;
+}
+[RequireComponent(typeof(Image))]
 public class DZController : MonoBehaviour//挂在到DZController
 {
+    [HideInInspector]
+    public GameObject startobj;//已经存在的UI
     //UI预制件
-    public GameObject start;
     public GameObject agen;
     public GameObject bgen;
+    public GameObject cgen;
     public GameObject end;
     public Text DZtip;
 
@@ -16,17 +25,22 @@ public class DZController : MonoBehaviour//挂在到DZController
     public Cell maincell;
     [Range(2,8)]
     public int count;//随机生成的最大值
+    [Range(1,4)]
+    public int number;//第几条技能链
     public Color basestartcolor;
     public Color baseagencolor;
     public Color basebgencolor;
+    public Color basecgencolor;
     public Color baseendcolor;
 
     public Color startcolor;
     public Color agencolor;
     public Color bgencolor;
+    public Color cgencolor;
     public Color endcolor;
 
-    private int point = -1;//当前指针
+    [HideInInspector]
+    public int point = -1;//当前指针
     private List<Groove> GrooveList = new List<Groove>();
     private int maxcount=2;//当前生成的最大数量,生成一次变一次，至少为2
 
@@ -35,6 +49,7 @@ public class DZController : MonoBehaviour//挂在到DZController
 
     private void Start()
     {
+        this.GetComponent<Image>().enabled = false;
         ReProduce();
         this.DZtip.gameObject.SetActive(false);
     }
@@ -49,7 +64,8 @@ public class DZController : MonoBehaviour//挂在到DZController
                 if (OVRInput.GetDown(OVRInput.RawButton.Y) | OVRInput.GetDown(OVRInput.RawButton.B))
                 {
                     //释放大招
-                    maincell.makedz(maxcount-2);
+                    if (GlobalData.choice == this.number)
+                        maincell.makedz(maxcount - 1, this.number);
                     ReProduce();
                     this.DZtip.gameObject.SetActive(false);
                     candz = false;
@@ -58,24 +74,43 @@ public class DZController : MonoBehaviour//挂在到DZController
         }
     }
 
-    public void check(GameObject gen)//用于检测当前碰到的gen对象是否为groovelist下一个未激活对象
+    public bool check(GameObject gen)//用于检测当前碰到的gen对象是否为groovelist下一个未激活对象，如果检测到startgroove==null返回true
     {
-        if ((point + 1) < maxcount)
+        if (gen.GetComponent<Gen>().type == genlist.begin)//碰到红色之后才执行
         {
-            if (GrooveList[point + 1]._GetType() == gen.GetComponent<Gen>().type)
+            if (GlobalData.startgroove==null)
             {
-                GrooveList[point + 1].IsEmpty = false;
-                point++;
-                if((point+1) >= maxcount)
-                    candz = true;//可以释放大招
+                GlobalData.startgroove = new Groove(startobj, genlist.begin, basestartcolor, startcolor);
+                GlobalData.startgroove.IsEmpty = false;
+                GlobalData.cancheck = true;
+                //print(GlobalData.startgroove.ToString());
+                return true;
+            }
+        }
+        if (GlobalData.cancheck)
+        {
+            if ((point + 1) < maxcount)
+            {
+                if (GrooveList[point + 1]._GetType() == gen.GetComponent<Gen>().type)
+                {
+                    GrooveList[point + 1].IsEmpty = false;
+                    point++;
+                    if ((point + 1) >= maxcount)
+                    {
+                        GlobalData.choice = this.number;
+                        candz = true;//可以释放大招
+                    }
+                }
+                else
+                    ReProduce();
             }
             else
-                ReProduce();
+            {
+                GlobalData.choice = this.number;
+                candz = true;//可以释放大招
+            }
         }
-        else
-        {
-            candz = true;//可以释放大招
-        }
+        return false;
     }
 
     void ReProduce()//初始化，实例化预制件（生成链）
@@ -86,22 +121,29 @@ public class DZController : MonoBehaviour//挂在到DZController
         GrooveList.Clear();
         maxcount = Random.Range(2, count + 1);
 
-        GameObject startobj = Instantiate(start, this.transform);
-        Groove startgroove = new Groove(startobj, genlist.begin, basestartcolor, startcolor);
-        GrooveList.Add(startgroove);
-        for(int i=0;i<maxcount-2;i++)
+//         GameObject startobj = start;
+//         Groove startgroove = new Groove(startobj, genlist.begin, basestartcolor, startcolor);
+//         GrooveList.Add(startgroove);
+        for(int i=0;i<maxcount-1;i++)
         {
-            if(Random.Range(0,2)==0)
+            var temp = Random.Range(0, 3);//0,1,2
+            if (temp == 0)
             {
                 GameObject agenobj = Instantiate(agen, this.transform);
                 Groove agengroove = new Groove(agenobj, genlist.agen, baseagencolor, agencolor);
                 GrooveList.Add(agengroove);
             }
-            else
+            else if (temp == 1)
             {
                 GameObject bgenobj = Instantiate(bgen, this.transform);
                 Groove bgengroove = new Groove(bgenobj, genlist.bgen, basebgencolor, bgencolor);
                 GrooveList.Add(bgengroove);
+            }
+            else
+            {
+                GameObject cgenobj = Instantiate(cgen, this.transform);
+                Groove cgengroove = new Groove(cgenobj, genlist.cgen, basecgencolor, cgencolor);
+                GrooveList.Add(cgengroove);
             }
         }
         GameObject endobj = Instantiate(end, this.transform);

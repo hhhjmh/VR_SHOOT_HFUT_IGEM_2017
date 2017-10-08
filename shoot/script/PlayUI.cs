@@ -21,10 +21,26 @@ public class PlayUI : MonoBehaviour
     private Text tblood;
     private float timer;
     public static float Times = 0.0f;
-    public GameObject dz;
+    public GameObject dz1;
+    public GameObject dz2;
+    public GameObject dz3;
+    public GameObject dz4;
+    public GameObject startobj;
+
     private void Awake()
     {
-        dz.SetActive(false);
+        GlobalData.choice = 0;
+        GlobalData.cancheck = false;
+        GlobalData.startgroove = null;
+        HightLight.dz1 = null;
+        HightLight.dz2 = null;
+        HightLight.dz3 = null;
+        HightLight.dz4 = null;
+        dz1.SetActive(false);
+        dz2.SetActive(false);
+        dz3.SetActive(false);
+        dz4.SetActive(false);
+        startobj.SetActive(false);
         Times = 0.0f;
         timer = 0.0f;
         round = GameObject.Find("round");
@@ -50,13 +66,27 @@ public class PlayUI : MonoBehaviour
             Debug.LogError("Blood Init error!");
         }
     }
-
+    private bool doonce = false;
     void Update()
     {
         bloodmax = maincell.maxblood;
         if(Controller.gamebegin==true)
         {
-            dz.SetActive(true);
+            if (doonce == false)
+            {
+                dz1.SetActive(true);
+                dz2.SetActive(true);
+                dz3.SetActive(true);
+                dz4.SetActive(true);
+                startobj.SetActive(true);
+                dz1.GetComponent<DZController>().startobj = startobj;
+                dz2.GetComponent<DZController>().startobj = startobj;
+                dz3.GetComponent<DZController>().startobj = startobj;
+                dz4.GetComponent<DZController>().startobj = startobj;
+                startobj.GetComponent<Image>().color = dz1.GetComponent<DZController>().basestartcolor;
+                doonce = true;
+            }
+
             blood.transform.FindChild("Image").GetComponent<Image>().color = new Color(1, 0, 0);
             times.gameObject.SetActive(true);
             blood.gameObject.SetActive(true);

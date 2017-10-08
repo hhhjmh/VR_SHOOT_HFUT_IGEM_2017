@@ -8,6 +8,7 @@ public enum genlist
     begin,
     agen,
     bgen,
+    cgen,
     end
 }
 
@@ -53,5 +54,9 @@ public class Groove
     public genlist _GetType()
     {
         return this.type;
+    }
+    public override string ToString()
+    {
+        return "name:"+perb.name+"\n"+"after_color:" + this.after_color;
     }
 }

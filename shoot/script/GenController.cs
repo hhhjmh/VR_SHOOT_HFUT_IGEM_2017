@@ -9,11 +9,15 @@ public class GenController : MonoBehaviour
     public float Threshold = 2;//DeltaTime+-阈值
     public int CountMax = 4;
     public bool CanProduce = true;//能否生成gen
-    public DZController dzc;
+    public DZController dzc1;
+    public DZController dzc2;
+    public DZController dzc3;
+    public DZController dzc4;
     //预制件
     public GameObject begin = null;
     public GameObject agen = null;
     public GameObject bgen = null;
+    public GameObject cgen = null;
     public GameObject end = null;
 
     private BoxCollider boder;
@@ -65,7 +69,7 @@ public class GenController : MonoBehaviour
         {
             Quaternion temp = Quaternion.Euler(new Vector3(0, 0, 0));
             GameObject obj = null;
-            switch (Random.Range(1,5))
+            switch (Random.Range(1,6))
             {
                 case 1:
                     obj = Instantiate(begin, a, temp);
@@ -80,13 +84,20 @@ public class GenController : MonoBehaviour
                     obj.GetComponent<Gen>().type = genlist.bgen;
                     break;
                 case 4:
+                    obj = Instantiate(cgen, a, temp);
+                    obj.GetComponent<Gen>().type = genlist.cgen;
+                    break;
+                case 5:
                     obj = Instantiate(end, a, temp);
                     obj.GetComponent<Gen>().type = genlist.end;
                     break;
             }
             obj.GetComponent<Gen>().speed = Random.Range(0.1f, 0.2f);//0.1f;
             obj.GetComponent<Gen>().life = Random.Range(5.0f, 10.0f);//10f;
-            obj.GetComponent<Gen>().dzc = dzc;
+            obj.GetComponent<Gen>().dzc1 = dzc1;
+            obj.GetComponent<Gen>().dzc2 = dzc2;
+            obj.GetComponent<Gen>().dzc3 = dzc3;
+            obj.GetComponent<Gen>().dzc4 = dzc4;
         }
     }
 }
