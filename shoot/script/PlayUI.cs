@@ -31,7 +31,6 @@ public class PlayUI : MonoBehaviour
     {
         GlobalData.choice = 0;
         GlobalData.cancheck = false;
-        GlobalData.startgroove = null;
         HightLight.dz1 = null;
         HightLight.dz2 = null;
         HightLight.dz3 = null;
@@ -79,11 +78,11 @@ public class PlayUI : MonoBehaviour
                 dz3.SetActive(true);
                 dz4.SetActive(true);
                 startobj.SetActive(true);
-                dz1.GetComponent<DZController>().startobj = startobj;
-                dz2.GetComponent<DZController>().startobj = startobj;
-                dz3.GetComponent<DZController>().startobj = startobj;
-                dz4.GetComponent<DZController>().startobj = startobj;
-                startobj.GetComponent<Image>().color = dz1.GetComponent<DZController>().basestartcolor;
+//                 dz1.GetComponent<DZController>().startobj = startobj;
+//                 dz2.GetComponent<DZController>().startobj = startobj;
+//                 dz3.GetComponent<DZController>().startobj = startobj;
+//                 dz4.GetComponent<DZController>().startobj = startobj;
+               // startobj.GetComponent<Image>().color = dz1.GetComponent<DZController>().basestartcolor;
                 doonce = true;
             }
 
