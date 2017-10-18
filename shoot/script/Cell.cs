@@ -41,8 +41,8 @@ public class Cell : MonoBehaviour
     public GameObject TipUI = null;//提示ui
     public float ColorSpeed = 2.0f;
     public Sprite[] textures;
-    public Image m_logo;//logo对象
-    public Text m_name;//name对象
+    //public Image m_logo;//logo对象
+    //public Text m_name;//name对象
 
     private bool canshowUI = true;
     private float blood;
@@ -54,6 +54,10 @@ public class Cell : MonoBehaviour
 
     public float LineWidth = 0.01f;
     public bool ShowLine = false;
+    public DZController dz1;
+    public DZController dz2;
+    public DZController dz3;
+    public DZController dz4;
 
     private LineRenderer line;
     private Vector3 vect;
@@ -81,7 +85,24 @@ public class Cell : MonoBehaviour
     public void dzfull()
     {
         if (GlobalData.choice != 0)
-            makedz(4, GlobalData.choice);
+        {
+            switch(GlobalData.choice)
+            {
+                case 1:
+                    dz1.setfull();
+                    break;
+                case 2:
+                    dz2.setfull();
+                    break;
+                case 3:
+                    dz3.setfull();
+                    break;
+                case 4:
+                    dz4.setfull();
+                    break;
+            }
+            //makedz(4, GlobalData.choice);
+        }
     }
 
     private float timeadd = 0.0f;

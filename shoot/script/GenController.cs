@@ -17,7 +17,7 @@ public class GenController : MonoBehaviour
     public GameObject begin = null;
     public GameObject agen = null;
     public GameObject bgen = null;
-    public GameObject cgen = null;
+    //public GameObject cgen = null;
     public GameObject end = null;
 
     private BoxCollider boder;
@@ -69,7 +69,7 @@ public class GenController : MonoBehaviour
         {
             Quaternion temp = Quaternion.Euler(new Vector3(0, 0, 0));
             GameObject obj = null;
-            switch (Random.Range(1,6))
+            switch (Random.Range(1,7))
             {
                 case 1:
                     obj = Instantiate(begin, a, temp);
@@ -83,13 +83,21 @@ public class GenController : MonoBehaviour
                     obj = Instantiate(bgen, a, temp);
                     obj.GetComponent<Gen>().type = genlist.bgen;
                     break;
+//                 case 4:
+//                     obj = Instantiate(cgen, a, temp);
+//                     obj.GetComponent<Gen>().type = genlist.cgen;
+//                     break;
                 case 4:
-                    obj = Instantiate(cgen, a, temp);
-                    obj.GetComponent<Gen>().type = genlist.cgen;
-                    break;
-                case 5:
                     obj = Instantiate(end, a, temp);
                     obj.GetComponent<Gen>().type = genlist.end;
+                    break;
+                case 5:
+                    obj = Instantiate(begin, a, temp);
+                    obj.GetComponent<Gen>().type = genlist.begin;
+                    break;
+                case 6:
+                    obj = Instantiate(agen, a, temp);
+                    obj.GetComponent<Gen>().type = genlist.agen;
                     break;
             }
             obj.GetComponent<Gen>().speed = Random.Range(0.1f, 0.2f);//0.1f;

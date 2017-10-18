@@ -32,10 +32,10 @@ public class GameInit : MonoBehaviour
     private void SetGame(BulletData ndata, BulletData sdata, string name, Vector3 maincolor, EasyOrHard noob = EasyOrHard.easy, state type = state.classic, int maxBlood = 100, int number = 5)//随机外观
     {
         maincell = GameObject.Find("maincell").GetComponent<Cell>();
-        maincell.m_name.text = name.ToString();
+        //maincell.m_name.text = name.ToString();
         int temp = (int)number % maincell.textures.Length;
-        maincell.m_logo.sprite = maincell.textures[temp];
-        maincell.transform.FindChild("model").GetComponent<MeshRenderer>().materials[0].color = new Color(maincolor.x, maincolor.y, maincolor.z);
+        //maincell.m_logo.sprite = maincell.textures[temp];
+        //maincell.transform.FindChild("model").GetComponent<MeshRenderer>().materials[0].color = new Color(maincolor.x, maincolor.y, maincolor.z);
 
         GameObject.Find("enemycontroller").GetComponent<EnemyController>().GameType = type;
         BulletData endata = new BulletData(ndata.TimeDV * 0.6f, ndata.size, ndata.color, ndata.type, ndata.LifeTime, ndata.damage, ndata.speed * 1.3f);

@@ -19,6 +19,10 @@ public class Groove
     private Color base_color;//原始颜色，不要改
     private bool isempty = true;
     private Color after_color;//传入的颜色
+    public Color After_Color
+    {
+        get { return this.after_color; }
+    }
     public bool IsEmpty
     {
         get
